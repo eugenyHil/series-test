@@ -8,10 +8,12 @@
 import Foundation
 
 typealias PopularSeriesCompletion = (Result<PopularSeries, NetworkError>) -> Void
+typealias SimilarSeriesCompletion = (Result<SimilarSeries, NetworkError>) -> Void
 
 protocol WebService {
   
   func fetchPopularSeries(page: Int, completion: @escaping PopularSeriesCompletion)
+  func fetchSimilarSeries(serieId: Int, page: Int, completion: @escaping SimilarSeriesCompletion)
 }
 
 final class WebServiceImp: WebService {
@@ -24,6 +26,22 @@ final class WebServiceImp: WebService {
     completion: @escaping PopularSeriesCompletion
   ) {
     let request = GetPopularSeriesRequest(page: page)
+    session.dataTask(
+      with: request,
+      decoder: decoder
+    ) { result in
+      completion(result)
+    }.resume()
+  }
+  
+  func fetchSimilarSeries(
+    serieId: Int,
+    page: Int,
+    completion: @escaping SimilarSeriesCompletion
+  ) {
+    let request = GetSimilarSeriesRequest(
+      serieId: serieId,
+      page: page)
     session.dataTask(
       with: request,
       decoder: decoder

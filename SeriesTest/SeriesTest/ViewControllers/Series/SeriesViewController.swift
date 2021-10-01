@@ -6,13 +6,15 @@
 //
 
 import UIKit
+import Combine
 
 final class SeriesViewController: UIViewController {
   
   @IBOutlet private weak var tableView: UITableView!
   
+  private let imageLoaderService = ImageLoaderService()
+  private var subscriptions = Set<AnyCancellable>()
   private let searchController = UISearchController(searchResultsController: nil)
-  
   private let viewModel = SeriesViewModel()
   
   private var isFiltering: Bool {
@@ -54,13 +56,46 @@ extension SeriesViewController: UITableViewDataSource {
   ) -> UITableViewCell {
     let cell: SeriesTableViewCell = tableView.dequeueReusableCell(for: indexPath)
     
-    let serie = isFiltering
+    var serie = isFiltering
     ? viewModel.filteredSeries[indexPath.row]
     : viewModel.series[indexPath.row]
       
     cell.setup(with: serie)
     
+    if let posterImage = serie.posterImage {
+      cell.set(image: posterImage)
+    } else if let posterPath = serie.posterPath,
+                let posterUrl = URL(string: "https://image.tmdb.org/t/p/original" + posterPath) {
+      imageLoaderService.loadImage(from: posterUrl)
+       .receive(on: RunLoop.main)
+       .sink { [weak self] image in
+         self?.viewModel.series[indexPath.row].posterImage = image
+         cell.set(image: image)
+       }
+       .store(in: &subscriptions)
+    }
+    
     return cell
+  }
+}
+
+// MARK: - UITableViewDataSource
+extension SeriesViewController: UITableViewDelegate {
+  
+  func tableView(
+    _ tableView: UITableView,
+    didSelectRowAt indexPath: IndexPath
+  ) {
+    let serie = isFiltering
+    ? viewModel.filteredSeries[indexPath.row]
+    : viewModel.series[indexPath.row]
+    
+    let detailsVC: SeriesDetailsViewController = UIStoryboard
+      .storyboard(storyboard: .main)
+      .instantiateViewController()
+    detailsVC.viewModel = SeriesDetailsViewModel(serie: serie)
+    
+    navigationController?.pushViewController(detailsVC, animated: true)
   }
 }
 

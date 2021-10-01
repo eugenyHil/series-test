@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct PopularSeries: Codable {
   
@@ -20,6 +21,7 @@ struct Serie: Codable {
   let posterPath: String?
   let voteAverage: Double
   let overview: String
+  var posterImage: UIImage?
   
   enum CodingKeys: String, CodingKey {
     case id

@@ -1,19 +1,19 @@
 //
-//  UITableView.swift
-//  UITableView
+//  UICollectionView.swift
+//  UICollectionView
 //
-//  Created by anduser on 29.09.21.
+//  Created by anduser on 30.09.21.
 //
 
 import UIKit
 
-extension UITableView {
+extension UICollectionView {
   
-  func dequeueReusableCell<T: UITableViewCell>(
+  func dequeueReusableCell<T: UICollectionViewCell>(
     for indexPath: IndexPath
   ) -> T where T: ReusableView {
     guard let cell = dequeueReusableCell(
-      withIdentifier: T.reuseIdentifier,
+      withReuseIdentifier: T.reuseIdentifier,
       for: indexPath as IndexPath
     ) as? T else {
       fatalError("Could not dequeue cell with identifier: \(T.reuseIdentifier)")
