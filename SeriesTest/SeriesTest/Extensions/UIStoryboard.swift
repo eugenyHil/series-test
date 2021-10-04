@@ -40,8 +40,10 @@ extension UIStoryboard {
   }
   
   func instantiateViewController<T: UIViewController>() -> T {
-    guard let viewController = instantiateViewController(withIdentifier: T.identifier) as? T else {
-      fatalError("Couldn't instantiate view controller with identifier \(T.identifier) ")
+    guard let viewController = instantiateViewController(
+      withIdentifier: T.identifier
+    ) as? T else {
+      fatalError("Couldn't instantiate view controller with id \(T.identifier)")
     }
     
     return viewController

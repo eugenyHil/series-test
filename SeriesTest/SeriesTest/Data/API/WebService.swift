@@ -10,16 +10,28 @@ import Foundation
 typealias PopularSeriesCompletion = (Result<PopularSeries, NetworkError>) -> Void
 typealias SimilarSeriesCompletion = (Result<SimilarSeries, NetworkError>) -> Void
 
-protocol WebService {
+protocol WebServiceProtocol {
   
-  func fetchPopularSeries(page: Int, completion: @escaping PopularSeriesCompletion)
-  func fetchSimilarSeries(serieId: Int, page: Int, completion: @escaping SimilarSeriesCompletion)
+  func fetchPopularSeries(
+    page: Int,
+    completion: @escaping PopularSeriesCompletion
+  )
+  func fetchSimilarSeries(
+    serieId: Int,
+    page: Int,
+    completion: @escaping SimilarSeriesCompletion
+  )
 }
 
-final class WebServiceImp: WebService {
+final class WebService: WebServiceProtocol {
   
-  private let session: URLSession = URLSession.shared
-  private let decoder: JSONDecoder = JSONDecoder()
+  private let session = URLSession.shared
+  
+  private lazy var decoder: JSONDecoder = {
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    return decoder
+  }()
   
   func fetchPopularSeries(
     page: Int,

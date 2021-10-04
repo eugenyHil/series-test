@@ -9,10 +9,10 @@ import Foundation
 
 struct Dependencies {
   
-  var webService: WebService
+  var webService: WebServiceProtocol
   
   init() {
-    webService = WebServiceImp()
+    webService = WebService()
   }
 }
 

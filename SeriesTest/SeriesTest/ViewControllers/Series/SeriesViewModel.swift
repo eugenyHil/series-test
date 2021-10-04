@@ -6,27 +6,51 @@
 //
 
 import Foundation
+import Combine
 
 final class SeriesViewModel {
   
-  var isFetchInProgress = false
-  var series: [Serie] = []
-  var filteredSeries: [Serie] = []
-  var page: Int = 1
+  private var isFetchInProgress = false
+  private var page: Int = 1
+  private var series: [Serie] = []
+  private var filteredSeries: [Serie] = []
   
-  func filterContentForSearchText(
-    _ searchText: String,
-    completion: () -> Void
-  ) {
+  private(set) var output = PassthroughSubject<Output, Never>()
+  
+  func filterContent(for searchText: String) {
     filteredSeries = series.filter {
       $0.name.lowercased().contains(searchText.lowercased())
     }
     
-    completion()
+    output.send(.refreshTable)
   }
   
-  func fetchPopularSeries(refreshCompletion: @escaping () -> Void) {
-    guard !isFetchInProgress else {
+  func serie(at index: Int, isFiltering: Bool) -> Serie {
+    isFiltering
+    ? filteredSeries[index]
+    : series[index]
+  }
+  
+  func seriesCount(isFiltering: Bool) -> Int {
+    isFiltering
+    ? filteredSeries.count
+    : series.count
+  }
+  
+  func fetchNextPageIfNeeded(indexes: [Int], isFiltering: Bool) {
+    if indexes.contains(where: { index in
+      shouldFetchNextPage(at: index, isFiltering: isFiltering)
+    }) {
+      fetchPopularSeries()
+    }
+  }
+}
+
+// MARK: - Networking
+extension SeriesViewModel {
+  
+  func fetchPopularSeries() {
+    if isFetchInProgress {
       return
     }
       
@@ -42,16 +66,39 @@ final class SeriesViewModel {
         case let .success(series):
           DispatchQueue.main.async {
             self.series += series.results
-            refreshCompletion()
+            self.output.send(.refreshTable)
             self.page += 1
             
             self.isFetchInProgress = false
           }
         case .failure:
           DispatchQueue.main.async {
+            // TODO (eh): error handling should be added
             self.isFetchInProgress = false
           }
         }
       }
+  }
+}
+
+// MARK: - Output
+extension SeriesViewModel {
+  
+  enum Output {
+   
+    case refreshTable
+  }
+}
+
+// MARK: - Private
+private extension SeriesViewModel {
+
+  func shouldFetchNextPage(
+    at index: Int,
+    isFiltering: Bool
+  ) -> Bool {
+    isFiltering
+    ? index >= filteredSeries.count - 1
+    : index >= series.count - 1
   }
 }

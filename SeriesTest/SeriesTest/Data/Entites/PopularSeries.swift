@@ -21,13 +21,7 @@ struct Serie: Codable {
   let posterPath: String?
   let voteAverage: Double
   let overview: String
-  var posterImage: UIImage?
-  
-  enum CodingKeys: String, CodingKey {
-    case id
-    case name
-    case posterPath = "poster_path"
-    case voteAverage = "vote_average"
-    case overview
-  }
 }
+
+// MARK: - PosterPresentable
+extension Serie: PosterPresentable {}

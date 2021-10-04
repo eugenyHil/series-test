@@ -12,29 +12,27 @@ final class SeriesViewController: UIViewController {
   
   @IBOutlet private weak var tableView: UITableView!
   
-  private let imageLoaderService = ImageLoaderService()
-  private var subscriptions = Set<AnyCancellable>()
   private let searchController = UISearchController(searchResultsController: nil)
-  private let viewModel = SeriesViewModel()
+  private var subscriptions = Set<AnyCancellable>()
   
   private var isFiltering: Bool {
     let searchBarScopeIsFiltering = searchController.searchBar.selectedScopeButtonIndex != 0
     return searchController.isActive && (!isSearchBarEmpty || searchBarScopeIsFiltering)
   }
   
-  var isSearchBarEmpty: Bool {
+  private var isSearchBarEmpty: Bool {
     searchController.searchBar.text?.isEmpty ?? true
   }
+  
+  private let viewModel = SeriesViewModel()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    setupSearchController()
-    setupTableView()
+    setupControls()
+    setupObservers()
     
-    viewModel.fetchPopularSeries() { [weak self] in
-      self?.tableView.reloadData()
-    }
+    viewModel.fetchPopularSeries()
   }
 }
 
@@ -45,9 +43,7 @@ extension SeriesViewController: UITableViewDataSource {
     _ tableView: UITableView,
     numberOfRowsInSection section: Int
   ) -> Int {
-    isFiltering
-    ? viewModel.filteredSeries.count
-    : viewModel.series.count
+    viewModel.seriesCount(isFiltering: isFiltering)
   }
   
   func tableView(
@@ -56,24 +52,11 @@ extension SeriesViewController: UITableViewDataSource {
   ) -> UITableViewCell {
     let cell: SeriesTableViewCell = tableView.dequeueReusableCell(for: indexPath)
     
-    var serie = isFiltering
-    ? viewModel.filteredSeries[indexPath.row]
-    : viewModel.series[indexPath.row]
+    let serie = viewModel.serie(
+      at: indexPath.row,
+      isFiltering: isFiltering)
       
     cell.setup(with: serie)
-    
-    if let posterImage = serie.posterImage {
-      cell.set(image: posterImage)
-    } else if let posterPath = serie.posterPath,
-                let posterUrl = URL(string: "https://image.tmdb.org/t/p/original" + posterPath) {
-      imageLoaderService.loadImage(from: posterUrl)
-       .receive(on: RunLoop.main)
-       .sink { [weak self] image in
-         self?.viewModel.series[indexPath.row].posterImage = image
-         cell.set(image: image)
-       }
-       .store(in: &subscriptions)
-    }
     
     return cell
   }
@@ -86,9 +69,9 @@ extension SeriesViewController: UITableViewDelegate {
     _ tableView: UITableView,
     didSelectRowAt indexPath: IndexPath
   ) {
-    let serie = isFiltering
-    ? viewModel.filteredSeries[indexPath.row]
-    : viewModel.series[indexPath.row]
+    let serie = viewModel.serie(
+      at: indexPath.row,
+      isFiltering: isFiltering)
     
     let detailsVC: SeriesDetailsViewController = UIStoryboard
       .storyboard(storyboard: .main)
@@ -102,20 +85,13 @@ extension SeriesViewController: UITableViewDelegate {
 // MARK: - UITableViewDataSourcePrefetching
 extension SeriesViewController: UITableViewDataSourcePrefetching {
   
-  func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-    if indexPaths.contains(where: isLoadingCell) {
-      viewModel.fetchPopularSeries() {
-        tableView.reloadData()
-      }
-    }
-  }
-  
-  func isLoadingCell(for indexPath: IndexPath) -> Bool {
-    if isFiltering {
-      return indexPath.row >= viewModel.filteredSeries.count - 1
-    } else {
-      return indexPath.row >= viewModel.series.count - 1
-    }
+  func tableView(
+    _ tableView: UITableView,
+    prefetchRowsAt indexPaths: [IndexPath]
+  ) {
+    viewModel.fetchNextPageIfNeeded(
+      indexes: indexPaths.map { $0.row },
+      isFiltering: isFiltering)
   }
 }
 
@@ -123,9 +99,7 @@ extension SeriesViewController: UITableViewDataSourcePrefetching {
 extension SeriesViewController: UISearchResultsUpdating {
   
   func updateSearchResults(for searchController: UISearchController) {
-    viewModel.filterContentForSearchText(searchController.searchBar.text!) {
-      tableView.reloadData()
-    }
+    viewModel.filterContent(for: searchController.searchBar.text!)
   }
 }
 
@@ -136,14 +110,34 @@ extension SeriesViewController: UISearchBarDelegate {
     _ searchBar: UISearchBar,
     selectedScopeButtonIndexDidChange selectedScope: Int
   ) {
-    viewModel.filterContentForSearchText(searchBar.text!) {
-      tableView.reloadData()
+    viewModel.filterContent(for: searchBar.text!)
+  }
+}
+
+// MARK: - Observers
+private extension SeriesViewController {
+  
+  func setupObservers() {
+    setupOutputObserver()
+  }
+  
+  func setupOutputObserver() {
+    viewModel.output.sink { [weak self] in
+      switch $0 {
+      case .refreshTable:
+        self?.tableView.reloadData()
+      }
     }
+    .store(in: &subscriptions)
   }
 }
 
 // MARK: - Private
 private extension SeriesViewController {
+  
+  func setupControls() {
+    setupSearchController()
+  }
   
   func setupSearchController() {
     searchController.searchResultsUpdater = self
@@ -152,9 +146,5 @@ private extension SeriesViewController {
     navigationItem.searchController = searchController
     definesPresentationContext = true
     searchController.searchBar.delegate = self
-  }
-  
-  func setupTableView() {
-    tableView.prefetchDataSource = self
   }
 }

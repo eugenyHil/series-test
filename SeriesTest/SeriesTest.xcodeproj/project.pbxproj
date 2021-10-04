@@ -14,7 +14,6 @@
 		CA76F8BD2707181E00BD22BB /* UIStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA76F8BC2707181E00BD22BB /* UIStoryboard.swift */; };
 		CA76F8BF2707183400BD22BB /* UICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA76F8BE2707183400BD22BB /* UICollectionView.swift */; };
 		CA76F8C12707184E00BD22BB /* ReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA76F8C02707184E00BD22BB /* ReusableView.swift */; };
-		CA76F8C32707186200BD22BB /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA76F8C22707186200BD22BB /* Publisher.swift */; };
 		CA76F8C52707188700BD22BB /* GetSimilarSeriesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA76F8C42707188700BD22BB /* GetSimilarSeriesRequest.swift */; };
 		CA76F8C7270718AF00BD22BB /* SimilarSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA76F8C6270718AF00BD22BB /* SimilarSeries.swift */; };
 		CA8E36DA27049D5800DF0A46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8E36D927049D5800DF0A46 /* AppDelegate.swift */; };
@@ -36,6 +35,9 @@
 		CA8E37152705D0AA00DF0A46 /* URLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8E37142705D0AA00DF0A46 /* URLSession.swift */; };
 		CA8E37182705D0F600DF0A46 /* SeriesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8E37172705D0F600DF0A46 /* SeriesTableViewCell.swift */; };
 		CA8E371A2705D11A00DF0A46 /* SeriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8E37192705D11A00DF0A46 /* SeriesViewModel.swift */; };
+		CAE54E16270B2DFF005FBD25 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE54E15270B2DFF005FBD25 /* UIImage.swift */; };
+		CAE54E18270B2E16005FBD25 /* PosterPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE54E17270B2E16005FBD25 /* PosterPresentable.swift */; };
+		CAE54E1A270B2E7F005FBD25 /* ImageSizeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE54E19270B2E7F005FBD25 /* ImageSizeType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,7 +48,6 @@
 		CA76F8BC2707181E00BD22BB /* UIStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStoryboard.swift; sourceTree = "<group>"; };
 		CA76F8BE2707183400BD22BB /* UICollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionView.swift; sourceTree = "<group>"; };
 		CA76F8C02707184E00BD22BB /* ReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableView.swift; sourceTree = "<group>"; };
-		CA76F8C22707186200BD22BB /* Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
 		CA76F8C42707188700BD22BB /* GetSimilarSeriesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetSimilarSeriesRequest.swift; sourceTree = "<group>"; };
 		CA76F8C6270718AF00BD22BB /* SimilarSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarSeries.swift; sourceTree = "<group>"; };
 		CA8E36D627049D5800DF0A46 /* SeriesTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeriesTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +71,9 @@
 		CA8E37142705D0AA00DF0A46 /* URLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSession.swift; sourceTree = "<group>"; };
 		CA8E37172705D0F600DF0A46 /* SeriesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTableViewCell.swift; sourceTree = "<group>"; };
 		CA8E37192705D11A00DF0A46 /* SeriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesViewModel.swift; sourceTree = "<group>"; };
+		CAE54E15270B2DFF005FBD25 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
+		CAE54E17270B2E16005FBD25 /* PosterPresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterPresentable.swift; sourceTree = "<group>"; };
+		CAE54E19270B2E7F005FBD25 /* ImageSizeType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSizeType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,7 +200,8 @@
 				CA76F8BC2707181E00BD22BB /* UIStoryboard.swift */,
 				CA76F8BE2707183400BD22BB /* UICollectionView.swift */,
 				CA76F8C02707184E00BD22BB /* ReusableView.swift */,
-				CA76F8C22707186200BD22BB /* Publisher.swift */,
+				CAE54E15270B2DFF005FBD25 /* UIImage.swift */,
+				CAE54E17270B2E16005FBD25 /* PosterPresentable.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -206,6 +211,7 @@
 			children = (
 				CA8E37062705CE0C00DF0A46 /* PopularSeries.swift */,
 				CA76F8C6270718AF00BD22BB /* SimilarSeries.swift */,
+				CAE54E19270B2E7F005FBD25 /* ImageSizeType.swift */,
 			);
 			path = Entites;
 			sourceTree = "<group>";
@@ -311,8 +317,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA76F8C32707186200BD22BB /* Publisher.swift in Sources */,
 				CA8E37132705D09400DF0A46 /* WebService.swift in Sources */,
+				CAE54E18270B2E16005FBD25 /* PosterPresentable.swift in Sources */,
 				CA8E36DE27049D5800DF0A46 /* SeriesViewController.swift in Sources */,
 				CA8E36FC2705CCCB00DF0A46 /* Environment.swift in Sources */,
 				CA8E36DA27049D5800DF0A46 /* AppDelegate.swift in Sources */,
@@ -321,8 +327,10 @@
 				CA8E37072705CE0C00DF0A46 /* PopularSeries.swift in Sources */,
 				CA76F8BD2707181E00BD22BB /* UIStoryboard.swift in Sources */,
 				CA76F8B72707178000BD22BB /* SeriesDetailsViewController.swift in Sources */,
+				CAE54E1A270B2E7F005FBD25 /* ImageSizeType.swift in Sources */,
 				CA8E370B2705D03000DF0A46 /* GetPopularSeriesRequest.swift in Sources */,
 				CA76F8C12707184E00BD22BB /* ReusableView.swift in Sources */,
+				CAE54E16270B2DFF005FBD25 /* UIImage.swift in Sources */,
 				CA8E371A2705D11A00DF0A46 /* SeriesViewModel.swift in Sources */,
 				CA8E37182705D0F600DF0A46 /* SeriesTableViewCell.swift in Sources */,
 				CA8E36DC27049D5800DF0A46 /* SceneDelegate.swift in Sources */,

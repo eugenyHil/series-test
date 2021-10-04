@@ -12,8 +12,8 @@ extension URLSession {
   func dataTask<T: Decodable>(
     with request: Request,
     decoder: JSONDecoder,
-    completion: @escaping (Result<T, NetworkError>) -> Void) -> URLSessionDataTask
-  {
+    completion: @escaping (Result<T, NetworkError>) -> Void
+  ) -> URLSessionDataTask {
     dataTask(
       with: request.urlRequest
     ) { data, response, error in

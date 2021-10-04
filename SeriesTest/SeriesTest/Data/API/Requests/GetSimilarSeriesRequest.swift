@@ -17,7 +17,7 @@ struct GetSimilarSeriesRequest: Request {
   }
   
   var parameters: [String: String]? {
-    ["api_key": "bbdfe81e406333158335330da668137d",
+    ["api_key": Environment.current.apiKey,
      "page": String(page)]
   }
 }

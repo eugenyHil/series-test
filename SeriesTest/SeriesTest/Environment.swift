@@ -29,5 +29,11 @@ extension Environment {
         }
     return url
   }
+  
+  var apiKey: String {
+    guard let apiKey = Bundle.main.infoDictionary?["ApiKey"] as? String else {
+      fatalError("ApiKey is invalid or not exists in info.plist")
+    }
+    return apiKey
+  }
 }
-

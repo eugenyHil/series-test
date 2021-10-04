@@ -24,18 +24,12 @@ final class SeriesDetailsViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    nameLabel.text = viewModel.serie.name
-    overviewLabel.text = viewModel.serie.overview
-    posterImageView.image = viewModel.serie.posterImage
+    setupControls()
+    setupObservers()
     
-    viewModel.fetchSimilarSeries { [weak self] in
-      self?.collectionView.reloadData()
-    }
+    viewModel.fetchPoster()
+    viewModel.fetchSimilarSeries()
   }
-}
-
-// MARK: - UICollectionViewDelegate
-extension SeriesDetailsViewController: UICollectionViewDelegate {
 }
 
 // MARK: - UICollectionViewDataSource
@@ -58,21 +52,36 @@ extension SeriesDetailsViewController: UICollectionViewDataSource {
     let serie = viewModel.series[indexPath.row]
     cell.setup(with: serie)
     
-    if let posterImage = serie.posterImage {
-      cell.set(image: posterImage)
-    } else if let posterPath = serie.posterPath,
-                let posterUrl = URL(string: "https://image.tmdb.org/t/p/original" + posterPath) {
-      imageLoaderService.loadImage(from: posterUrl)
-       .receive(on: RunLoop.main)
-       .sink { [weak self] image in
-         self?.viewModel.series[indexPath.row].posterImage = image
-         cell.set(image: image)
-       }
-       .store(in: &subscriptions)
-    }
-    
     return cell
   }
 }
 
+// MARK: - Observers
+private extension SeriesDetailsViewController {
+  
+  func setupObservers() {
+    setupOutputObserver()
+  }
+  
+  func setupOutputObserver() {
+    viewModel.output.sink { [weak self] in
+      switch $0 {
+      case .refreshCollection:
+        self?.collectionView.reloadData()
+      case let .poster(image):
+        self?.posterImageView.image = image
+      }
+    }
+    .store(in: &subscriptions)
+  }
+}
 
+// MARK: - Private
+private extension SeriesDetailsViewController {
+  
+  func setupControls() {
+    title = "Details"
+    nameLabel.text = viewModel.serie.name
+    overviewLabel.text = viewModel.serie.overview
+  }
+}

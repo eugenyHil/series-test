@@ -14,8 +14,9 @@ final class SeriesDetailsViewModel {
   private var subscriptions = Set<AnyCancellable>()
   private let imageLoaderService = ImageLoaderService()
   
-  let serie: Serie
-  var series: [SimilarSerie] = []
+  private(set) var output = PassthroughSubject<Output, Never>()
+  private(set) var serie: Serie
+  private(set) var series: [SimilarSerie] = []
   
   init(serie: Serie) {
     self.serie = serie
@@ -25,7 +26,17 @@ final class SeriesDetailsViewModel {
 // MARK: - Networking
 extension SeriesDetailsViewModel {
   
-  func fetchSimilarSeries(refreshCompletion: @escaping () -> Void) {
+  func fetchPoster() {
+    if let posterURL = serie.posterURL {
+      imageLoaderService.loadImage(from: posterURL)
+        .sink { [weak self] image in
+          self?.output.send(.poster(image))
+        }
+        .store(in: &subscriptions)
+    }
+  }
+  
+  func fetchSimilarSeries() {
     Current.webService
       .fetchSimilarSeries(serieId: serie.id, page: 1) { [weak self] in
         guard let self = self else {
@@ -34,14 +45,24 @@ extension SeriesDetailsViewModel {
         
         switch $0 {
         case let .success(series):
-          print(series)
           DispatchQueue.main.async {
-            self.series += series.results
-            refreshCompletion()
+            self.series = series.results
+            self.output.send(.refreshCollection)
           }
         case let .failure(error):
+          // TODO (eh): error handling should be added
           print(error)
         }
       }
+  }
+}
+
+// MARK: - Output
+extension SeriesDetailsViewModel {
+  
+  enum Output {
+   
+    case refreshCollection
+    case poster(UIImage?)
   }
 }

@@ -19,11 +19,7 @@ struct SimilarSerie: Codable {
   let id: Int
   let name: String
   let posterPath: String?
-  var posterImage: UIImage?
-  
-  enum CodingKeys: String, CodingKey {
-    case id
-    case name
-    case posterPath = "poster_path"
-  }
 }
+
+// MARK: - PosterPresentable
+extension SimilarSerie: PosterPresentable {}
