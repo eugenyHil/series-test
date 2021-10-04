@@ -62,7 +62,7 @@ extension SeriesViewController: UITableViewDataSource {
   }
 }
 
-// MARK: - UITableViewDataSource
+// MARK: - UITableViewDelegate
 extension SeriesViewController: UITableViewDelegate {
   
   func tableView(
